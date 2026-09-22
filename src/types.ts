@@ -4,6 +4,8 @@ export type GameDifficulty = DifficultyLevel;
 
 export type GameView = 'lobby' | 'room' | 'victory';
 
+export type SupportedLanguage = 'vi' | 'th' | 'en' | 'zh' | 'fr' | 'es';
+
 export type VerdictStatus = 'IDLE' | 'CORRECT' | 'PARTLY CORRECT' | 'TRY AGAIN' | 'MISSION FAILED';
 
 export interface Mentor {
@@ -36,6 +38,10 @@ export interface VocabularyItem {
   ipa_us: string;
   part_of_speech: string;
   vietnamese_meaning: string;
+  thai_meaning?: string;
+  chinese_meaning?: string;
+  french_meaning?: string;
+  spanish_meaning?: string;
   simple_english_definition: string;
   example: string;
   room: number;
@@ -116,6 +122,7 @@ export interface RoomConfig {
 
 export interface PlayerSession {
   playerName: string;
+  language?: SupportedLanguage;
   teamMembers?: string[];
   gameMode: GameMode;
   difficulty: DifficultyLevel;

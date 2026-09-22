@@ -6,9 +6,9 @@ import avatarHero from '../assets/images/avatar_hero_1790074502534.jpg';
 import avatarDimark from '../assets/images/avatar_dimark_noglasses_1790084940550.jpg';
 import avatarTuanRich from '../assets/images/avatar_tuan_rich_1790074537705.jpg';
 import avatarDrTang from '../assets/images/avatar_dr_tang_shirt_1790084953167.jpg';
-import avatarPhuongChick from '../assets/images/avatar_phuong_straight_1790084965990.jpg';
+import avatarPhuongChick from '../assets/images/avatar_phuong_shoulder_length_1790085956876.jpg';
 import avatarSelena from '../assets/images/avatar_selena_1790074551623.jpg';
-import avatarNgoan from '../assets/images/avatar_ngoan_1790074567505.jpg';
+import avatarNgoan from '../assets/images/avatar_ngoan_short_hair_1790085121431.jpg';
 
 export const STEM_MENTORS: Mentor[] = [
   {
@@ -130,7 +130,7 @@ export const STEM_MENTORS: Mentor[] = [
     avatarStyle: {
       skinTone: '#F4D4BC',
       hairColor: '#1E1E24',
-      hairStyle: 'long_straight', // Long straight hair (not curly)
+      hairStyle: 'shoulder_length_straight', // Straight hair touching shoulders, black square eyeglasses
       glasses: true,
       outfit: 'red_ao_dai', // Red Vietnamese Áo Dài
       outfitColor: '#DC2626',
@@ -172,7 +172,7 @@ export const STEM_MENTORS: Mentor[] = [
     avatarStyle: {
       skinTone: '#ECC3A4',
       hairColor: '#18181B',
-      hairStyle: 'stylish_bun',
+      hairStyle: 'short_modern', // Short hair
       glasses: false,
       outfit: 'blue_ao_dai', // Blue Vietnamese Áo Dài
       outfitColor: '#2563EB',

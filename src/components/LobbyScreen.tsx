@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { GameDifficulty, GameMode, PlayerSession } from '../types';
+import { GameDifficulty, GameMode, PlayerSession, SupportedLanguage } from '../types';
 import { STEM_MENTORS, MentorAvatar } from '../data/mentors';
 import { soundManager } from '../utils/audio';
+import { getTranslation, SUPPORTED_LANGUAGES } from '../data/translations';
 import {
   Users,
   User,
@@ -10,6 +11,8 @@ import {
   Settings,
   ShieldCheck,
   Zap,
+  Globe,
+  Check,
 } from 'lucide-react';
 
 interface LobbyScreenProps {
@@ -19,6 +22,8 @@ interface LobbyScreenProps {
   onOpenTeacher: () => void;
   savedSession: PlayerSession | null;
   onResumeGame: () => void;
+  currentLanguage: SupportedLanguage;
+  onChangeLanguage: (lang: SupportedLanguage) => void;
 }
 
 export const LobbyScreen: React.FC<LobbyScreenProps> = ({
@@ -28,11 +33,15 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
   onOpenTeacher,
   savedSession,
   onResumeGame,
+  currentLanguage,
+  onChangeLanguage,
 }) => {
   const [playerName, setPlayerName] = useState<string>('Alex Minh');
   const [gameMode, setGameMode] = useState<GameMode>('individual');
   const [teamMembersInput, setTeamMembersInput] = useState<string>('Linh, Huy, An');
   const [difficulty, setDifficulty] = useState<GameDifficulty>('Scientist');
+
+  const t = getTranslation(currentLanguage);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,11 +60,17 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
       gameMode,
       teamMembers: members,
       difficulty,
+      language: currentLanguage,
     });
   };
 
+  const handleSelectLanguage = (code: SupportedLanguage) => {
+    soundManager.playClick();
+    onChangeLanguage(code);
+  };
+
   return (
-    <div className="min-h-[calc(100vh-60px)] flex flex-col justify-center items-center px-4 py-8 max-w-5xl mx-auto space-y-8 animate-fadeIn">
+    <div className="min-h-[calc(100vh-60px)] flex flex-col justify-center items-center px-4 py-8 max-w-5xl mx-auto space-y-7 animate-fadeIn">
       {/* Title & Council Banner */}
       <div className="text-center space-y-3 max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold uppercase tracking-wider">
@@ -63,13 +78,70 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           Interactive STEM &amp; English Escape Room Challenge
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-300 via-sky-100 to-indigo-300 bg-clip-text text-transparent">
-          Escape the STEM Lab
+          {t.appName}
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans max-w-2xl mx-auto">
-          Phòng thí nghiệm trung tâm bị khóa khẩn cấp! Hãy cùng{' '}
-          <strong className="text-cyan-300">Hội đồng Cố vấn STEM gồm 8 giáo viên</strong> giải mã 5
-          phòng thử thách, thu thập 5 mảnh mã khóa <code className="text-amber-300 font-bold font-mono">S - T - E - M - !</code> và mở cánh cửa thoát hiểm!
+          {t.homeIntro}
         </p>
+      </div>
+
+      {/* Prominent Multi-Language Selection Bar with Flags */}
+      <div className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs sm:text-sm font-bold text-slate-200 uppercase tracking-wide">
+              {t.selectLanguage}
+            </span>
+          </div>
+          <span className="text-xs font-medium text-cyan-300 px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-800">
+            {t.languageSelectedBadge}
+          </span>
+        </div>
+
+        {/* Flags Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
+          {SUPPORTED_LANGUAGES.map(lang => {
+            const isSelected = currentLanguage === lang.code;
+            return (
+              <button
+                key={lang.code}
+                id={`lang-btn-${lang.code}`}
+                type="button"
+                onClick={() => handleSelectLanguage(lang.code)}
+                className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all relative overflow-hidden group ${
+                  isSelected
+                    ? 'bg-gradient-to-br from-cyan-950 via-slate-900 to-indigo-950 border-cyan-400 text-white shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/50 scale-[1.02]'
+                    : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/60'
+                }`}
+              >
+                <span className="text-2xl select-none shrink-0 drop-shadow">{lang.flag}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-bold truncate flex items-center gap-1">
+                    <span>{lang.localName}</span>
+                    {isSelected && <Check className="w-3 h-3 text-cyan-400 shrink-0" />}
+                  </div>
+                  <div className="text-[10px] text-slate-400 truncate">{lang.label}</div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Special greeting banner for Thai students when Thai is selected */}
+        {currentLanguage === 'th' && (
+          <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 flex items-center gap-3 text-xs text-amber-200 animate-fadeIn">
+            <span className="text-xl">🇹🇭</span>
+            <div>
+              <span className="font-bold block text-amber-300">
+                ยินดีต้อนรับนักเรียนไทยสู่ห้องแล็บ STEM (Welcome Thai Students)!
+              </span>
+              <span>
+                ทุกคำศัพท์วิทยาศาสตร์ คำใบ้ และภารกิจมีคำแปลภาษาไทยชัดเจน เพื่อให้เรียนรู้คำศัพท์ภาษาอังกฤษได้อย่างมั่นใจ
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 8 Mentors Lineup Teaser */}
@@ -83,10 +155,10 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
         <div className="flex items-center justify-between w-full mb-3 text-xs text-slate-400">
           <span className="font-semibold text-slate-300 flex items-center gap-1.5">
             <Users className="w-4 h-4 text-purple-400" />
-            Hội đồng Cố vấn STEM (8 Giáo viên Đồng hành):
+            {t.mentorsCouncilTitle}
           </span>
           <span className="text-cyan-400 group-hover:underline text-[11px]">
-            Nhấn xem hồ sơ chi tiết &rarr;
+            {t.viewCouncilDetails}
           </span>
         </div>
 
@@ -109,9 +181,9 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
         {savedSession && !savedSession.isCompleted && (
           <div className="p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500/50 flex items-center justify-between gap-3 text-xs">
             <div>
-              <span className="font-bold text-cyan-300 block">Tiếp tục phiên chơi dở dang:</span>
+              <span className="font-bold text-cyan-300 block">{t.resumeBanner}</span>
               <span className="text-slate-300">
-                {savedSession.playerName} &bull; Phòng {savedSession.currentRoom} &bull;{' '}
+                {savedSession.playerName} &bull; {t.roomPrefix} {savedSession.currentRoom} &bull;{' '}
                 {savedSession.score} pts
               </span>
             </div>
@@ -122,7 +194,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               }}
               className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-colors shrink-0 shadow-md shadow-cyan-500/20"
             >
-              Chơi tiếp
+              {t.resumeGameBtn}
             </button>
           </div>
         )}
@@ -131,7 +203,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           {/* Game Mode Selector */}
           <div>
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
-              Chế Độ Chơi (Game Mode)
+              {t.gameModeLabel}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -147,7 +219,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                 }`}
               >
                 <User className="w-4 h-4" />
-                Cá Nhân (Solo Explorer)
+                {t.soloMode}
               </button>
 
               <button
@@ -163,7 +235,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
                 }`}
               >
                 <Users className="w-4 h-4" />
-                Theo Đội (Team Innovation)
+                {t.teamMode}
               </button>
             </div>
           </div>
@@ -171,14 +243,14 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           {/* Player or Team Name */}
           <div>
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
-              {gameMode === 'team' ? 'Tên Đội Thi Đấu' : 'Tên Học Sinh'}
+              {gameMode === 'team' ? t.teamNameLabel : t.playerNameLabel}
             </label>
             <input
               type="text"
               required
               value={playerName}
               onChange={e => setPlayerName(e.target.value)}
-              placeholder={gameMode === 'team' ? 'Ví dụ: Đội Tia Chớp STEM' : 'Ví dụ: Nguyễn Minh An'}
+              placeholder={gameMode === 'team' ? 'Team STEM Titans' : 'Alex Minh'}
               className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-sans"
             />
           </div>
@@ -187,13 +259,13 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           {gameMode === 'team' && (
             <div>
               <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
-                Danh Sách Thành Viên (phân cách bằng dấu phẩy)
+                {t.teamMembersLabel}
               </label>
               <input
                 type="text"
                 value={teamMembersInput}
                 onChange={e => setTeamMembersInput(e.target.value)}
-                placeholder="Ví dụ: Hoàng, Linh, An, Tuấn"
+                placeholder="Hoàng, Linh, An, Tuấn"
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-sans"
               />
             </div>
@@ -202,14 +274,14 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
           {/* Difficulty Tier */}
           <div>
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
-              Cấp Độ &amp; Độ Khó (Target Grade &amp; Difficulty)
+              {t.difficultyLabel}
             </label>
             <div className="grid grid-cols-3 gap-2">
               {(
                 [
-                  { id: 'Explorer', label: 'Explorer', desc: 'Lớp 6-7' },
-                  { id: 'Scientist', label: 'Scientist', desc: 'Lớp 8-9 (Chuẩn)' },
-                  { id: 'Innovator', label: 'Innovator', desc: 'Lớp 10+' },
+                  { id: 'Explorer', label: t.explorerLevel, desc: t.explorerDesc },
+                  { id: 'Scientist', label: t.scientistLevel, desc: t.scientistDesc },
+                  { id: 'Innovator', label: t.innovatorLevel, desc: t.innovatorDesc },
                 ] as const
               ).map(diff => (
                 <button
@@ -240,7 +312,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 font-bold text-sm text-white shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
             >
               <Zap className="w-4 h-4" />
-              Bắt Đầu Giải Mã Phòng Lab (Khởi Hành)
+              {t.startGameBtn}
             </button>
           </div>
         </form>
@@ -255,7 +327,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             className="flex items-center gap-1.5 hover:text-emerald-300 transition-colors"
           >
             <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-            200 Từ Vựng Flashcards
+            {t.vocabFlashcardsBtn}
           </button>
 
           <button
@@ -266,7 +338,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             className="flex items-center gap-1.5 hover:text-purple-300 transition-colors"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
-            Hội Đồng 8 Cố Vấn
+            {t.councilBtn}
           </button>
 
           <button
@@ -277,7 +349,7 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
             className="flex items-center gap-1.5 hover:text-amber-300 transition-colors"
           >
             <Settings className="w-3.5 h-3.5 text-amber-400" />
-            Bảng Giáo Viên
+            {t.teacherDashboardBtn}
           </button>
         </div>
       </div>

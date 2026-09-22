@@ -1,4 +1,4 @@
-import { PlayerSession, Question, StudentLog, TeacherSettings, VocabularyItem } from '../types';
+import { PlayerSession, Question, StudentLog, SupportedLanguage, TeacherSettings, VocabularyItem } from '../types';
 import { INITIAL_QUESTIONS } from '../data/rooms';
 import { STEM_VOCABULARY_BANK } from '../data/vocabulary';
 
@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
   CUSTOM_QUESTIONS: 'stem_lab_custom_questions',
   STUDENT_LOGS: 'stem_lab_student_logs',
   VOCAB_PROGRESS: 'stem_lab_vocab_progress',
+  USER_LANGUAGE: 'stem_lab_user_language',
 };
 
 export const DEFAULT_TEACHER_SETTINGS: TeacherSettings = {
@@ -179,4 +180,25 @@ export function exportLogsToCSV(logs: StudentLog[]): void {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// Language Persistence
+export function loadUserLanguage(): SupportedLanguage {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.USER_LANGUAGE);
+    if (raw && ['vi', 'th', 'en', 'zh', 'fr', 'es'].includes(raw)) {
+      return raw as SupportedLanguage;
+    }
+    return 'vi';
+  } catch {
+    return 'vi';
+  }
+}
+
+export function saveUserLanguage(lang: SupportedLanguage): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.USER_LANGUAGE, lang);
+  } catch {
+    // Ignore
+  }
 }

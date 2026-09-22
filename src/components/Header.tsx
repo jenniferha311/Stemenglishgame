@@ -1,6 +1,7 @@
-import React from 'react';
-import { PlayerSession } from '../types';
+import React, { useState, useRef, useEffect } from 'react';
+import { PlayerSession, SupportedLanguage } from '../types';
 import { ROOMS_CONFIG } from '../data/rooms';
+import { ROOMS_I18N, SUPPORTED_LANGUAGES } from '../data/translations';
 import { soundManager } from '../utils/audio';
 import {
   Volume2,
@@ -12,6 +13,9 @@ import {
   Clock,
   Award,
   KeyRound,
+  Globe,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -24,6 +28,8 @@ interface HeaderProps {
   onToggleSound: () => void;
   isMuted: boolean;
   timeRemaining: number;
+  currentLanguage: SupportedLanguage;
+  onChangeLanguage: (lang: SupportedLanguage) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,9 +42,24 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleSound,
   isMuted,
   timeRemaining,
+  currentLanguage,
+  onChangeLanguage,
 }) => {
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const currentRoomConfig = ROOMS_CONFIG.find(r => r.id === session.currentRoom) || ROOMS_CONFIG[0];
   const collectedCount = Object.keys(session.codeFragments).length;
+
+  const activeLangOption =
+    SUPPORTED_LANGUAGES.find(l => l.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
+
+  const localizedRoom =
+    ROOMS_I18N[session.currentRoom]?.[currentLanguage] || {
+      title: currentRoomConfig.title_en,
+      objective: currentRoomConfig.objective_en,
+      theme: currentRoomConfig.theme,
+    };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.max(0, seconds) / 60);
@@ -47,6 +68,17 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const isLowTime = timeRemaining < 300 && session.timerEnabled;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-lg">
@@ -67,15 +99,19 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                <span className="text-cyan-400 font-semibold">Room {session.currentRoom}:</span>
-                <span className="truncate max-w-[140px] sm:max-w-none">{currentRoomConfig.title_en}</span>
+                <span className="text-cyan-400 font-semibold">
+                  {currentLanguage === 'th' ? `ห้องที่ ${session.currentRoom}:` : `Room ${session.currentRoom}:`}
+                </span>
+                <span className="truncate max-w-[140px] sm:max-w-none font-medium text-slate-200">
+                  {localizedRoom.title}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Status Metrics: Score, Timer, Player */}
-        <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+        <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
           {/* Player/Team */}
           <div className="hidden md:flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700/60 text-slate-300">
             <span className="text-slate-400 font-medium">{session.gameMode === 'team' ? 'Team:' : 'Player:'}</span>
@@ -124,8 +160,52 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Action Tools */}
+        {/* Action Tools & Language Selector */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Language Selector Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              id="header-lang-btn"
+              type="button"
+              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-cyan-500/60 text-xs font-semibold text-slate-200 transition-all shadow-sm"
+              title="Change Language / Chọn ngôn ngữ / เปลี่ยนภาษา"
+            >
+              <span className="text-base select-none leading-none">{activeLangOption.flag}</span>
+              <span className="hidden sm:inline font-mono">{activeLangOption.code.toUpperCase()}</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            </button>
+
+            {isLangMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1.5 z-50 animate-fadeIn">
+                <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                  Select Language / เลือกภาษา
+                </div>
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      soundManager.playClick();
+                      onChangeLanguage(lang.code);
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors ${
+                      currentLanguage === lang.code
+                        ? 'bg-cyan-950/80 text-cyan-300 font-bold'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg leading-none">{lang.flag}</span>
+                      <span>{lang.localName}</span>
+                    </div>
+                    {currentLanguage === lang.code && <Check className="w-3.5 h-3.5 text-cyan-400" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Backpack Modal */}
           <button
             id="header-backpack-btn"
