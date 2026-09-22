@@ -3,10 +3,10 @@ import { Mentor } from '../types';
 
 import avatarZainuddin from '../assets/images/avatar_zainuddin_1790074470008.jpg';
 import avatarHero from '../assets/images/avatar_hero_1790074502534.jpg';
-import avatarDimark from '../assets/images/avatar_dimark_1790074518623.jpg';
+import avatarDimark from '../assets/images/avatar_dimark_noglasses_1790084940550.jpg';
 import avatarTuanRich from '../assets/images/avatar_tuan_rich_1790074537705.jpg';
-import avatarDrTang from '../assets/images/avatar_dr_tang_1790074487410.jpg';
-import avatarPhuongChick from '../assets/images/avatar_phuong_chick_1790074446817.jpg';
+import avatarDrTang from '../assets/images/avatar_dr_tang_shirt_1790084953167.jpg';
+import avatarPhuongChick from '../assets/images/avatar_phuong_straight_1790084965990.jpg';
 import avatarSelena from '../assets/images/avatar_selena_1790074551623.jpg';
 import avatarNgoan from '../assets/images/avatar_ngoan_1790074567505.jpg';
 
@@ -110,7 +110,7 @@ export const STEM_MENTORS: Mentor[] = [
       hairColor: '#27272A',
       hairStyle: 'short_bob', // Slender, short hair, glasses
       glasses: true,
-      outfit: 'german_collar_kvis', // Purple German collar shirt with KVIS tag
+      outfit: 'german_collar_kvis', // Purple German collar shirt with KVIS tag (not Ao Dai)
       outfitColor: '#6B21A8',
       hasTie: false,
       tag: 'KVIS',
@@ -130,7 +130,7 @@ export const STEM_MENTORS: Mentor[] = [
     avatarStyle: {
       skinTone: '#F4D4BC',
       hairColor: '#1E1E24',
-      hairStyle: 'long_wavy',
+      hairStyle: 'long_straight', // Long straight hair (not curly)
       glasses: true,
       outfit: 'red_ao_dai', // Red Vietnamese Áo Dài
       outfitColor: '#DC2626',
