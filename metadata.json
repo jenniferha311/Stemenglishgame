@@ -1,0 +1,6 @@
+{
+  "name": "Escape the STEM Lab",
+  "description": "An interactive educational escape game integrating Science, Technology, Engineering, Mathematics, and English with an 8-mentor advisory council.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
