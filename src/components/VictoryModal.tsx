@@ -100,12 +100,12 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider text-center mb-3">
             Hội Đồng Cố Vấn STEM Đồng Nhiệt Liệt Chúc Mừng
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {STEM_MENTORS.map(m => (
               <div key={m.id} className="flex flex-col items-center group relative">
-                <MentorAvatar mentor={m} size="sm" />
-                <span className="text-[10px] text-slate-300 font-medium mt-1 truncate max-w-[70px]">
-                  {m.name.split(' ')[0]} {m.name.split(' ')[1]}
+                <MentorAvatar mentor={m} size="md" glow />
+                <span className="text-[11px] text-slate-300 font-medium mt-1 truncate max-w-[80px]">
+                  {m.name}
                 </span>
               </div>
             ))}
@@ -189,9 +189,9 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           </div>
 
           {/* Cô Phượng Chick Final Quote */}
-          <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-xs sm:text-sm text-rose-200 flex items-start gap-3">
-            <MentorAvatar mentor="phuong_chick" size="md" showBadge={false} />
-            <div className="space-y-1 flex-1">
+          <div className="p-4 sm:p-5 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-xs sm:text-sm text-rose-200 flex items-start gap-4">
+            <MentorAvatar mentor="phuong_chick" size="lg" glow />
+            <div className="space-y-1.5 flex-1">
               <div className="font-bold text-rose-300 flex items-center justify-between">
                 <span>Lời Chúc Từ Cô Phượng Chick:</span>
                 <button

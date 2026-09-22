@@ -75,8 +75,8 @@ export const MentorDialogue: React.FC<MentorDialogueProps> = ({
     <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-xl relative overflow-hidden backdrop-blur-md">
       {/* Top Banner with Lead & Support Mentors */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <MentorAvatar mentor={leadMentor} size="md" />
+        <div className="flex items-center gap-3.5">
+          <MentorAvatar mentor={leadMentor} size="lg" glow />
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-100 text-sm sm:text-base">

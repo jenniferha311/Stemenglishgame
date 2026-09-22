@@ -91,12 +91,12 @@ export const LobbyScreen: React.FC<LobbyScreenProps> = ({
         </div>
 
         {/* Mentors Preview Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5">
           {STEM_MENTORS.map(m => (
-            <div key={m.id} className="flex flex-col items-center">
-              <MentorAvatar mentor={m} size="sm" />
-              <span className="text-[10px] text-slate-400 mt-1 font-medium truncate max-w-[65px]">
-                {m.name.split(' ')[0]} {m.name.split(' ')[1]}
+            <div key={m.id} className="flex flex-col items-center group/m">
+              <MentorAvatar mentor={m} size="md" glow />
+              <span className="text-[11px] text-slate-300 group-hover/m:text-cyan-300 mt-1.5 font-medium truncate max-w-[85px] text-center transition-colors">
+                {m.name}
               </span>
             </div>
           ))}

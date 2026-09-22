@@ -15,6 +15,7 @@ export interface Mentor {
   color: string;
   accentHex: string;
   symbol: string;
+  avatarUrl?: string;
   avatarStyle: {
     skinTone: string;
     hairColor: string;

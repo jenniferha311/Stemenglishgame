@@ -72,14 +72,14 @@ export const MentorCouncilModal: React.FC<MentorCouncilModalProps> = ({ isOpen, 
               </div>
 
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <MentorAvatar mentor={mentor} size="md" />
-                  <div>
-                    <h3 className="font-bold text-slate-100 text-sm sm:text-base leading-tight">
+                <div className="flex items-center gap-3.5 mb-3">
+                  <MentorAvatar mentor={mentor} size="lg" glow />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-slate-100 text-sm sm:text-base leading-tight truncate">
                       {mentor.name}
                     </h3>
                     <span
-                      className="text-[11px] font-semibold tracking-wide inline-block mt-0.5"
+                      className="text-[11px] font-semibold tracking-wide block mt-0.5 line-clamp-1"
                       style={{ color: mentor.accentHex }}
                     >
                       {mentor.expertise}
