@@ -58,91 +58,35 @@ export const MentorCouncilModal: React.FC<MentorCouncilModalProps> = ({ isOpen, 
           </button>
         </div>
 
-        {/* Council Grid in Specified Reference Order */}
-        <div className="p-4 sm:p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Council Grid in Specified Reference Order (Only Teacher Avatar & Name) */}
+        <div className="p-4 sm:p-6 overflow-y-auto grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {councilInOrder.map((mentor, index) => (
             <div
               key={mentor.id}
-              className="bg-slate-800/50 hover:bg-slate-800/90 border border-slate-700/70 hover:border-slate-500 rounded-xl p-4 transition-all flex flex-col justify-between shadow-md relative overflow-hidden"
+              className="bg-slate-800/60 hover:bg-slate-800/95 border border-slate-700/80 hover:border-cyan-500/60 rounded-2xl p-4 sm:p-5 transition-all flex flex-col items-center justify-center text-center shadow-lg relative group overflow-hidden"
               style={{ borderTopColor: mentor.accentHex, borderTopWidth: '3px' }}
             >
               {/* Order number tag */}
-              <div className="absolute top-2 right-2 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900/80 text-slate-400 border border-slate-700">
+              <div className="absolute top-2.5 right-2.5 text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700/80">
                 #{index + 1}
               </div>
 
-              <div>
-                <div className="flex items-center gap-3.5 mb-3">
-                  <MentorAvatar mentor={mentor} size="lg" glow />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-slate-100 text-sm sm:text-base leading-tight truncate">
-                      {mentor.name}
-                    </h3>
-                    <span
-                      className="text-[11px] font-semibold tracking-wide block mt-0.5 line-clamp-1"
-                      style={{ color: mentor.accentHex }}
-                    >
-                      {mentor.expertise}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Specific Visual Identity description badges */}
-                <div className="text-xs text-slate-300 bg-slate-900/60 rounded-lg p-2 border border-slate-800 mb-3 space-y-1">
-                  <div className="text-[11px] text-slate-400 font-medium">{mentor.role}</div>
-                  {mentor.id === 'zainuddin' && (
-                    <div className="text-[10px] text-amber-300/90">
-                      👔 Áo sơ vin, bắt buộc đeo cà vạt; học giả Malaysia uyên bác, tóc dày chải gọn.
-                    </div>
-                  )}
-                  {mentor.id === 'dr_tang' && (
-                    <div className="text-[10px] text-purple-300/90">
-                      🧪 Áo sơ mi cổ Đức màu tím, tag &quot;KVIS&quot; trên ngực; dáng gầy, tóc ngắn, đeo kính.
-                    </div>
-                  )}
-                  {mentor.id === 'phuong_chick' && (
-                    <div className="text-[10px] text-rose-300/90">
-                      🎙️ Áo dài Việt Nam màu đỏ, đeo kính; phát âm IPA &amp; truyền cảm hứng song ngữ.
-                    </div>
-                  )}
-                  {mentor.id === 'selena' && (
-                    <div className="text-[10px] text-purple-300/90">
-                      🌿 Áo dài Việt Nam màu tím; cố vấn sinh học &amp; hệ sinh thái bền vững.
-                    </div>
-                  )}
-                  {mentor.id === 'ngoan' && (
-                    <div className="text-[10px] text-blue-300/90">
-                      💡 Áo dài Việt Nam màu xanh blue; cố vấn thiết kế sáng tạo &amp; làm việc nhóm.
-                    </div>
-                  )}
-                  {(mentor.id === 'hero' || mentor.id === 'dimark' || mentor.id === 'tuan_rich') && (
-                    <div className="text-[10px] text-slate-400">
-                      👔 Áo sơ mi lịch sự, sơ vin gọn gàng, phong thái sư phạm chuyên nghiệp.
-                    </div>
-                  )}
-                </div>
+              {/* Teacher Avatar */}
+              <div className="my-2 transform group-hover:scale-105 transition-transform duration-200">
+                <MentorAvatar mentor={mentor} size="xl" glow />
               </div>
 
-              {/* Quote & TTS Audio button */}
-              <div className="pt-2 border-t border-slate-800 flex items-start justify-between gap-2">
-                <p className="text-[11px] italic text-slate-400 flex-1 leading-snug">
-                  &ldquo;{mentor.quote}&rdquo;
-                </p>
-                <button
-                  onClick={() => soundManager.speak(mentor.quote, 'us')}
-                  className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-700 transition-colors shrink-0"
-                  title="Listen to quote in English"
-                >
-                  <Volume2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              {/* Only Teacher Name as requested */}
+              <h3 className="font-bold text-slate-100 text-base sm:text-lg mt-2 tracking-tight">
+                {mentor.name}
+              </h3>
             </div>
           ))}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-3 bg-slate-800/80 border-t border-slate-700/80 flex items-center justify-between text-xs text-slate-400">
-          <span>7 cố vấn đầu tiên đối chiếu theo thứ tự ảnh nhóm tham chiếu (từ trái qua phải).</span>
+          <span>8 Giáo viên Hội đồng Cố vấn STEM</span>
           <button
             onClick={() => {
               soundManager.playClick();
@@ -150,7 +94,7 @@ export const MentorCouncilModal: React.FC<MentorCouncilModalProps> = ({ isOpen, 
             }}
             className="px-4 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 font-semibold text-white transition-colors"
           >
-            Đóng bảng cố vấn
+            Đóng
           </button>
         </div>
       </div>

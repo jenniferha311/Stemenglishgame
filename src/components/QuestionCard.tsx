@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Question } from '../types';
+import { Question, SupportedLanguage } from '../types';
 import { soundManager } from '../utils/audio';
+import { getLocalizedQuestionPrompt } from '../data/multilingualQuestions';
 import {
   Volume2,
   ArrowUp,
@@ -16,12 +17,14 @@ interface QuestionCardProps {
   question: Question;
   onSubmitAnswer: (answer: unknown) => void;
   disabled?: boolean;
+  currentLanguage?: SupportedLanguage;
 }
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   onSubmitAnswer,
   disabled = false,
+  currentLanguage = 'vi',
 }) => {
   // State for different question modes
   const [selectedOption, setSelectedOption] = useState<string | number>('');
@@ -145,6 +148,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   const rightSideOptions = Array.from(new Set(matchingPairs.map(p => p.right))).sort();
 
+  const { primaryPrompt, englishPrompt } = getLocalizedQuestionPrompt(
+    question,
+    currentLanguage || 'vi'
+  );
+
   return (
     <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-5 sm:p-6 shadow-xl space-y-5">
       {/* Question Header & Points */}
@@ -159,16 +167,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
 
         <h3 className="text-base sm:text-lg font-bold text-slate-100 leading-snug">
-          {question.prompt_vi}
+          {primaryPrompt}
         </h3>
 
         {/* English Prompt with Audio Pronunciation */}
         <div className="mt-2 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start justify-between gap-2">
           <p className="text-xs sm:text-sm text-cyan-200/90 italic font-sans leading-relaxed">
-            &ldquo;{question.prompt_en}&rdquo;
+            &ldquo;{englishPrompt}&rdquo;
           </p>
           <button
-            onClick={() => soundManager.speak(question.prompt_en, 'us')}
+            onClick={() => soundManager.speak(englishPrompt, 'us')}
             className="p-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors shrink-0"
             title="Nghe câu hỏi bằng tiếng Anh chuẩn"
           >

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { PlayerSession, Question, RoomConfig, VerdictStatus } from '../types';
+import { PlayerSession, Question, RoomConfig, VerdictStatus, SupportedLanguage } from '../types';
+import { ROOMS_I18N } from '../data/translations';
 import { MentorDialogue } from './MentorDialogue';
 import { QuestionCard } from './QuestionCard';
 import { soundManager } from '../utils/audio';
@@ -28,6 +29,7 @@ interface RoomViewProps {
   onAdvanceToNextRoom: () => void;
   onOpenKeypad: () => void;
   onBackToLobby: () => void;
+  currentLanguage?: SupportedLanguage;
 }
 
 export const RoomView: React.FC<RoomViewProps> = ({
@@ -38,6 +40,7 @@ export const RoomView: React.FC<RoomViewProps> = ({
   onAdvanceToNextRoom,
   onOpenKeypad,
   onBackToLobby,
+  currentLanguage = 'vi',
 }) => {
   // Current question index within the room
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -51,10 +54,17 @@ export const RoomView: React.FC<RoomViewProps> = ({
   const roomQuestions = questions.filter(q => q.room === roomConfig.id);
   const currentQuestion = roomQuestions[currentQuestionIndex] || roomQuestions[0];
 
+  const localizedRoom =
+    ROOMS_I18N[roomConfig.id]?.[currentLanguage] || {
+      title: roomConfig.title_vi,
+      objective: roomConfig.objective_vi,
+      theme: roomConfig.theme,
+    };
+
   const targetFragment = roomConfig.targetLetter || roomConfig.code_fragment;
   const leadMentor = roomConfig.leadMentor || roomConfig.lead_mentor;
   const supportMentor = roomConfig.supportMentor || roomConfig.support_mentor;
-  const scenarioText = roomConfig.scenario || roomConfig.objective_vi;
+  const scenarioText = localizedRoom.objective || roomConfig.scenario || roomConfig.objective_vi;
   const fragmentUnlocked = !!session.codeFragments[roomConfig.id];
 
   // Dynamic Room Icon mapping
@@ -270,6 +280,7 @@ export const RoomView: React.FC<RoomViewProps> = ({
             question={currentQuestion}
             onSubmitAnswer={handleAnswerSubmit}
             disabled={isAnsweredCorrectly}
+            currentLanguage={currentLanguage}
           />
 
           {/* Next Action Button after Question is Correct / Finished */}

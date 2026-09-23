@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GameView, PlayerSession, Question, TeacherSettings } from './types';
+import { GameView, PlayerSession, Question, TeacherSettings, SupportedLanguage } from './types';
 import { ROOMS_CONFIG } from './data/rooms';
 import {
   loadPlayerSession,
@@ -29,15 +29,20 @@ export default function App() {
   const [questions, setQuestions] = useState<Question[]>(() => loadQuestions());
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
+  // Saved Session
+  const [savedSession, setSavedSession] = useState<PlayerSession | null>(() => loadPlayerSession());
+
+  // Language State (Defaults to saved preference or Vietnamese)
+  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(() => {
+    return savedSession?.language || 'vi';
+  });
+
   // Modals state
   const [isCouncilOpen, setIsCouncilOpen] = useState<boolean>(false);
   const [isBackpackOpen, setIsBackpackOpen] = useState<boolean>(false);
   const [isVocabOpen, setIsVocabOpen] = useState<boolean>(false);
   const [isTeacherOpen, setIsTeacherOpen] = useState<boolean>(false);
   const [isKeypadOpen, setIsKeypadOpen] = useState<boolean>(false);
-
-  // Saved Session
-  const [savedSession, setSavedSession] = useState<PlayerSession | null>(() => loadPlayerSession());
 
   // Active Session state
   const [session, setSession] = useState<PlayerSession>(() => {
@@ -46,6 +51,7 @@ export default function App() {
         playerName: 'Young Scientist',
         gameMode: 'individual',
         difficulty: 'Scientist',
+        language: 'vi',
         currentRoom: 1,
         score: 0,
         mistakesCount: 0,
@@ -70,6 +76,16 @@ export default function App() {
       }
     );
   });
+
+  // Handle Language Switching dynamically across the whole application
+  const handleSelectLanguage = (lang: SupportedLanguage) => {
+    setCurrentLanguage(lang);
+    setSession(prev => {
+      const updated = { ...prev, language: lang };
+      savePlayerSession(updated);
+      return updated;
+    });
+  };
 
   // Countdown Timer
   useEffect(() => {
@@ -98,11 +114,13 @@ export default function App() {
 
   // Start New Game from Lobby
   const handleStartGame = (sessionData: Partial<PlayerSession>) => {
+    const selectedLang = sessionData.language || currentLanguage;
     const newSession: PlayerSession = {
       playerName: sessionData.playerName || 'Young Scientist',
       gameMode: sessionData.gameMode || 'individual',
       teamMembers: sessionData.teamMembers || [],
       difficulty: sessionData.difficulty || teacherSettings.defaultDifficulty || 'Scientist',
+      language: selectedLang,
       currentRoom: 1,
       score: 0,
       mistakesCount: 0,
@@ -134,6 +152,9 @@ export default function App() {
   // Resume Game
   const handleResumeGame = () => {
     if (savedSession) {
+      if (savedSession.language) {
+        setCurrentLanguage(savedSession.language);
+      }
       setSession(savedSession);
       setCurrentView('room');
     }
@@ -261,6 +282,8 @@ export default function App() {
         onToggleSound={handleToggleSound}
         isMuted={isMuted}
         timeRemaining={session.timeRemainingSeconds}
+        currentLanguage={currentLanguage}
+        onChangeLanguage={handleSelectLanguage}
       />
 
       {/* Main Body Routing */}
@@ -273,6 +296,8 @@ export default function App() {
             onOpenTeacher={() => setIsTeacherOpen(true)}
             savedSession={savedSession}
             onResumeGame={handleResumeGame}
+            currentLanguage={currentLanguage}
+            onChangeLanguage={handleSelectLanguage}
           />
         )}
 
@@ -285,6 +310,7 @@ export default function App() {
             onAdvanceToNextRoom={handleAdvanceToNextRoom}
             onOpenKeypad={() => setIsKeypadOpen(true)}
             onBackToLobby={() => setCurrentView('lobby')}
+            currentLanguage={currentLanguage}
           />
         )}
 
@@ -319,6 +345,7 @@ export default function App() {
         isOpen={isVocabOpen}
         onClose={() => setIsVocabOpen(false)}
         incorrectWordIds={session.incorrectWordIds}
+        initialLanguage={currentLanguage}
       />
 
       <KeypadModal

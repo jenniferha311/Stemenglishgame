@@ -83,10 +83,9 @@ export const MentorDialogue: React.FC<MentorDialogueProps> = ({
                 {leadMentor.name}
               </span>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 uppercase">
-                Cố Vấn Trưởng (Phán Quyết)
+                Cố Vấn Trưởng
               </span>
             </div>
-            <p className="text-xs text-slate-400">{leadMentor.expertise}</p>
           </div>
         </div>
 
